@@ -8,22 +8,15 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     expose:
       - "5432"
     ports:
       - "5432:5432"
-    networks:
-      - sleep-stack
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "sample@gmail.com.br"
-      PGADMIN_DEFAULT_PASSWORD: "postgres"
-    ports:
-      - "50100:80"
-    depends_on:
-      - db
     networks:
       - sleep-stack
 
@@ -38,6 +31,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
       - SPRING_DATASOURCE_USER=user
       - SPRING_DATASOURCE_PASSWORD=password
+    restart: on-failure
     depends_on:
       - db
     networks:

@@ -9,8 +9,6 @@ RUN ./gradlew wrapper
 
 COPY src/ src
 
-RUN ./gradlew build; exit 0
+RUN ./gradlew build
 
-# ENTRYPOINT ["java","-jar","build/libs/sleep-0.0.1-SNAPSHOT.jar"]
-
-CMD tail -f /dev/null
+ENTRYPOINT ["java","-jar","build/libs/sleep-0.0.1-SNAPSHOT.jar"]

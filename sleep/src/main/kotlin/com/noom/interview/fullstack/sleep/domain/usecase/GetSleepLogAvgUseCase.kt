@@ -1,10 +1,9 @@
 package com.noom.interview.fullstack.sleep.domain.usecase
 
+import com.noom.interview.fullstack.sleep.common.*
 import com.noom.interview.fullstack.sleep.domain.model.aggr.SleepAvg
 import com.noom.interview.fullstack.sleep.domain.model.type.SleepRating
 import com.noom.interview.fullstack.sleep.domain.repository.SleepLogRepository
-import com.noom.interview.fullstack.sleep.common.avgPair
-import com.noom.interview.fullstack.sleep.common.toSeconds
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -27,10 +26,7 @@ class GetSleepLogAvgUseCase(@Autowired val sleepLogRepository: SleepLogRepositor
         return if (sleepLogs.isNotEmpty())
             SleepAvg(
                 sleepLogs.sumOf { it.totalTime }.div(sleepLogs.size.toLong()),
-                sleepLogs
-                    .map { Pair(it.startTime.toSeconds(), it.endTime.toSeconds()) }
-                    .avgPair()
-                    .let { Pair(LocalTime.ofSecondOfDay(it.first), LocalTime.ofSecondOfDay(it.second)) },
+                Pair(sleepLogs.map { it.startTime }.timeAvg(), sleepLogs.map { it.endTime }.timeAvg()),
                 Pair(sleepLogs.minOf { it.date }, sleepLogs.maxOf { it.date }),
                 ratings
             )
